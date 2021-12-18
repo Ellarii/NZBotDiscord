@@ -67,7 +67,9 @@ async def kill(ctx, arg, amount=1):
   if "@" in arg:
     if "@everyone" in arg or "@here" in arg:
       await ctx.channel.send("You are not allowed to ping this user")
+      print(fail)
     else:
+      print(f"kill command used by {ctx.author} in {ctx.guild}")
       if int(amount) is not ValueError:
         if amount == 1:
           await ctx.channel.send(f"If you wish to have more than one ping, please enter an amount in the following format\n`{prefix}kill [Mention] [Amount]`")
@@ -75,7 +77,7 @@ async def kill(ctx, arg, amount=1):
           await ctx.channel.send(arg)
       elif int(amount) is ValueError:
         await ctx.channel.send("Please enter a number")
-    print(f"kill command used by {ctx.author} in {ctx.guild}")
+    
   elif arg is str:
     await ctx.channel.send("Please ping a user")
     print(fail)
