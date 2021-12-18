@@ -1,0 +1,3 @@
+https://PythonBot.nouvellezelande.repl.co
+
+This is used to check if the bot is active. Should show "I'm Alive" if active
