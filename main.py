@@ -8,7 +8,6 @@ from keep_alive import keep_alive
 import random
 import youtube_dl
 import asyncio
-import time
 import datetime as dt
 
 # Setup
