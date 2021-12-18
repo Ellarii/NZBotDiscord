@@ -191,13 +191,24 @@ async def on_ready():
 # On member join
 @client.event
 async def on_member_join(member):
-    print(f"{member} has joined a server")
+    print(f"{member} has joined a server.")
+    mc=member.guild.member_count
+    channel=client.get_channel(909954400565485588)
+    channel2 = client.get_channel(792281236650459156)
+    embed=discord.Embed(title=f"{member} has joined the server!", description=f"The member count is now {mc}!", color=000)
+    await channel.send(embed=embed)
+    await channel2.send(embed=embed)
 
 # On member leave
 @client.event
 async def on_member_remove(member):
-    print(f"{member} has left a server")
-
+    print(f"{member} has left a server.")
+    mc=member.guild.member_count
+    channel = client.get_channel(909954400565485588)
+    channel2 = client.get_channel(792281236650459156)
+    embed1 = discord.Embed(title=f"{member} has left the server.", description=f"The member count is now {mc}!", color=000)
+    await channel.send(embed=embed1)
+    await channel2.send(embed=embed1)
 # End commands
 keep_alive()
 if __name__ == "__main__":
