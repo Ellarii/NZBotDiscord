@@ -180,6 +180,17 @@ async def stop(ctx):
     else:
         await ctx.send("The bot is not playing anything at the moment.")
 
+@client.command(name="Get ID", description="Gets the ID of a user **MOD ONLY**")
+@commands.has_role(759909993649930250)
+async def getid(ctx, user: discord.User):
+  if "@" in user:
+    embed=discord.Embed(title=f"ID of {user}", description=f"The ID of this user is {user.id}")
+    embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.avatar_url)
+    await ctx.send(f"{user.id}", embed=embed)
+  else:
+    await ctx.channel.send("You must specify a user to get an id for!")
+
+
 # Always tracking
 # On bot begin
 @client.event
@@ -194,13 +205,13 @@ async def on_ready():
 async def on_member_join(member):
     print(f"{member} has joined a server.")
     mc=member.guild.member_count
-    member_id=member.id
     channel=client.get_channel(909954400565485588)
     channel2 = client.get_channel(792281236650459156)
     member_creation_date=member.created_at.timestamp()
     format_date=dt.datetime.utcfromtimestamp(member_creation_date).strftime("%Y/%m/%d %H:%M")
     embed1=discord.Embed(title=f"{member} has joined the server!", description=f"The member count is now {mc}!", color=000)
-    embed2 = discord.Embed(title=f"{member} has left the server.", description=f"The member count is now {mc}!\n\n\nAccount Created at: {format_date}", color=000, footer=f"ID: {member_id}")
+    embed2 = discord.Embed(title=f"{member} has left the server.", description=f"The member count is now {mc}!\n\n\nAccount Created at: {format_date}", color=000)
+    embed2.set_footer(text=f"ID: {member.id}")
     await channel2.send(embed=embed1)
     await channel.send(embed=embed2)
 
@@ -209,13 +220,13 @@ async def on_member_join(member):
 async def on_member_remove(member):
     print(f"{member} has left a server.")
     mc=member.guild.member_count
-    member_id = member.id
     channel = client.get_channel(909954400565485588)
     channel2 = client.get_channel(792281236650459156)
     member_creation_date=member.created_at.timestamp()
     format_date=dt.datetime.utcfromtimestamp(member_creation_date).strftime("%Y/%m/%d %H:%M")
     embed1 = discord.Embed(title=f"{member} has left the server.", description=f"The member count is now {mc}!", color=000)
-    embed2 = discord.Embed(title=f"{member} has left the server.", description=f"The member count is now {mc}!\n\n\nAccount Created at: {format_date}", color=000, footer=f"ID: {member_id}")
+    embed2 = discord.Embed(title=f"{member} has left the server.", description=f"The member count is now {mc}!\n\n\nAccount Created at: {format_date}", color=000)
+    embed2.set_footer(text=f"ID: {member.id}")
     await channel2.send(embed=embed1)
     await channel.send(embed=embed2)
 # End commands
