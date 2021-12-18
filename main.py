@@ -44,11 +44,13 @@ ytdl = youtube_dl.YoutubeDL(ytdl_format_options)
 @client.command(name="ping", help="Checks to see if the bot is active. Should respond with 'pong'")
 async def ping(ctx):
     await ctx.channel.send("pong")
+    print("Ping command used")
 
 # Bot echoes
 @client.command(name="msg", help="Echoes a single word message")
 async def msg(ctx, arg):
     await ctx.channel.send(arg)
+    print("msg command used")
 
 # Multi word nz.msg
 @client.command(name="multimsg", help="Echoes a multiple word message")
@@ -57,10 +59,12 @@ async def multimsg(ctx, *args):
     for arg in args:
         response = response + " " + arg
     await ctx.channel.send(response)
+    print("multimsg command used")
 
 # Spam pinger (variable amount)
 @client.command(name="kill", help=f"Spam pings a user. Format `{prefix}kill [UserMention] [Amount]`")
 async def kill(ctx, arg, amount=1):
+  fail = f"kill command attempted by {ctx.author}"
   if "@" in arg:
     if "@everyone" in arg or "@here" in arg:
       await ctx.channel.send("You are not allowed to ping this user")
@@ -72,24 +76,30 @@ async def kill(ctx, arg, amount=1):
           await ctx.channel.send(arg)
       elif int(amount) is ValueError:
         await ctx.channel.send("Please enter a number")
+    print(f"kill command used by {ctx.author}")
   elif arg is str:
     await ctx.channel.send("Please ping a user")
+    print(fail)
   elif "everyone" in arg or "here" in arg:
     await ctx.channel.send("You are not allowed to ping this user")
+    print(fail)
   else:
     await ctx.channel.send("This command is used to spam ping a user. To begin, please type `nz.kill [UserPing]`!")
+    print(fail)
 
 # Embed message
 @client.command(name="botinfo", help="Displays Bot info = GitHub link")
 async def botinfo(ctx):
   embed = discord.Embed(title="Github", url="https://github.com/Nouvelle-Zelande", description="This bot was created by Nouvelle-Zelande#6154.\nFeel free to send any queries/questions their way!", color=000000)
   await ctx.send(embed=embed)
+  print("botinfo command used")
 
 @client.command(name="numbergen", help=f"Sends a random number between 1 and a specified amount. Format `{prefix}numbergen [MaxParam]`")
 async def numbergen(ctx, param):
   number = random.choice(list(range(int(param))))
   embed = discord.Embed(title="The number you generated was:", description=f"The number that you generated (between 1 and {param}) was:\n{number}", color=000000)
   await ctx.send(embed=embed)
+  print("numbergen command used")
 
 @client.command(name="coinflip", help="Flips a coin")
 async def coinflip(ctx):
@@ -101,6 +111,7 @@ async def coinflip(ctx):
   else:
     embed.set_image(url="https://media.discordapp.net/attachments/759929659453866035/920540884003586048/AmericanQuarterTails.png")
   await ctx.send(embed=embed)
+  print("coinflip command used")
 
 # Attempted music commands
 
@@ -109,10 +120,12 @@ async def coinflip(ctx):
 async def joinvc(ctx):
   if not ctx.author.voice.channel:
     await ctx.channel.send(f"{ctx.message.author.name} is not connected to a voice channel!")
+    print("joinvc command failed")
   else:
     channel = ctx.author.voice.channel
     await channel.connect()
     await ctx.channel.send(f"{channel} successfully joined!")
+    print("joinvc command used")
 
 @client.command(name="leavevc", help="Leaves a connected vc. Bot must be connected to a vc for this command to work")
 async def leavevc(ctx):
@@ -121,8 +134,10 @@ async def leavevc(ctx):
     channel = ctx.author.voice.channel
     await ctx.voice_client.disconnect()
     await ctx.channel.send(f"{channel} successfully left!")
+    print("leavevc command used")
   else:
     await ctx.channel.send(f"I am not connected to a voice channel! To make me join one, join a voice channel and type `{prefix}joinvc`")
+    print("leavevc command failed")
 
 youtube_dl.utils.bug_reports_message = lambda: ''
 
@@ -152,8 +167,11 @@ async def play(ctx,url):
         filename = await YTDLSource.from_url(url, loop=client.loop)
         voice_channel.play(discord.FFmpegPCMAudio(executable="ffmpeg.exe", source=filename))
       await ctx.send('**Now playing:** {}'.format(filename))
+      print("play command used")
     except:
       await ctx.send("The bot is not connected to a voice channel.")
+      print("play command failed")
+
 
 
 @client.command(name='pause', help='This command pauses the song')
@@ -161,34 +179,38 @@ async def pause(ctx):
     voice_client = ctx.message.guild.voice_client
     if voice_client.is_playing():
         await voice_client.pause()
+        print("pause command used")
     else:
         await ctx.send("The bot is not playing anything at the moment.")
+        print("pause command failed")
     
 @client.command(name='resume', help='Resumes the song')
 async def resume(ctx):
     voice_client = ctx.message.guild.voice_client
     if voice_client.is_paused():
         await voice_client.resume()
+        print("resume command used")
     else:
         await ctx.send("The bot was not playing anything before this. Use play_song command")
+        print("resume command failed")
 
 @client.command(name='stop', help='Stops the song')
 async def stop(ctx):
     voice_client = ctx.message.guild.voice_client
     if voice_client.is_playing():
         await voice_client.stop()
+        print("stop command used")
     else:
         await ctx.send("The bot is not playing anything at the moment.")
+        print("stop command failed")
 
-@client.command(name="Get ID", description="Gets the ID of a user **MOD ONLY**")
+@client.command(name="getid", description="Gets the ID of a user **MOD ONLY**")
 @commands.has_role(759909993649930250)
 async def getid(ctx, user: discord.User):
-  if "@" in user:
-    embed=discord.Embed(title=f"ID of {user}", description=f"The ID of this user is {user.id}")
-    embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.avatar_url)
-    await ctx.send(f"{user.id}", embed=embed)
-  else:
-    await ctx.channel.send("You must specify a user to get an id for!")
+  embed=discord.Embed(title=f"ID of {user}", description=f"The ID of this user is {user.id}")
+  embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.avatar_url)
+  await ctx.send(f"{user.id}", embed=embed)
+  print("getid command used")
 
 
 # Always tracking
