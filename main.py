@@ -70,7 +70,7 @@ async def kill(ctx, arg, amount=1):
     else:
       if int(amount) is not ValueError:
         if amount == 1:
-          await ctx.channel.send("If you wish to have more than one ping, please enter an amount in the following format\n`nz.kill [Mention] [Amount]`")
+          await ctx.channel.send(f"If you wish to have more than one ping, please enter an amount in the following format\n`{prefix}kill [Mention] [Amount]`")
         for number in range(int(amount)):
           await ctx.channel.send(arg)
       elif int(amount) is ValueError:
@@ -83,7 +83,7 @@ async def kill(ctx, arg, amount=1):
     await ctx.channel.send("You are not allowed to ping this user")
     print(fail)
   else:
-    await ctx.channel.send("This command is used to spam ping a user. To begin, please type `nz.kill [UserPing]`!")
+    await ctx.channel.send(f"This command is used to spam ping a user. To begin, please type `{prefix}kill [UserPing]`!")
     print(fail)
 
 # Embed message
