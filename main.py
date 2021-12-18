@@ -60,6 +60,11 @@ async def multimsg(ctx, *args):
     await ctx.channel.send(response)
     print(f"multimsg command used in {ctx.guild}")
 
+@client.command(name="bing", help=f"Echoes `dong`. Different form of {prefix}ping")
+async def bing(ctx):
+  await ctx.channel.send("dong")
+  print(f"bing command used in {ctx.guild}")
+
 # Spam pinger (variable amount)
 @client.command(name="kill", help=f"Spam pings a user. Format `{prefix}kill [UserMention] [Amount]`")
 async def kill(ctx, arg, amount=1):
