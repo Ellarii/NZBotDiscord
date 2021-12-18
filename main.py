@@ -2,13 +2,14 @@
 # Imports
 import os
 import discord
-from discord.ext import commands, tasks
+from discord.ext import commands
 from dotenv import load_dotenv
 from keep_alive import keep_alive
 import random
 import youtube_dl
 import asyncio
-
+import time
+import datetime as dt
 
 # Setup
 load_dotenv()
@@ -193,22 +194,30 @@ async def on_ready():
 async def on_member_join(member):
     print(f"{member} has joined a server.")
     mc=member.guild.member_count
+    member_id=member.id
     channel=client.get_channel(909954400565485588)
     channel2 = client.get_channel(792281236650459156)
-    embed=discord.Embed(title=f"{member} has joined the server!", description=f"The member count is now {mc}!", color=000)
-    await channel.send(embed=embed)
-    await channel2.send(embed=embed)
+    member_creation_date=member.created_at.timestamp()
+    format_date=dt.datetime.utcfromtimestamp(member_creation_date).strftime("%Y/%m/%d %H:%M")
+    embed1=discord.Embed(title=f"{member} has joined the server!", description=f"The member count is now {mc}!", color=000)
+    embed2 = discord.Embed(title=f"{member} has left the server.", description=f"The member count is now {mc}!\n\n\nAccount Created at: {format_date}", color=000, footer=f"ID: {member_id}")
+    await channel2.send(embed=embed1)
+    await channel.send(embed=embed2)
 
 # On member leave
 @client.event
 async def on_member_remove(member):
     print(f"{member} has left a server.")
     mc=member.guild.member_count
+    member_id = member.id
     channel = client.get_channel(909954400565485588)
     channel2 = client.get_channel(792281236650459156)
+    member_creation_date=member.created_at.timestamp()
+    format_date=dt.datetime.utcfromtimestamp(member_creation_date).strftime("%Y/%m/%d %H:%M")
     embed1 = discord.Embed(title=f"{member} has left the server.", description=f"The member count is now {mc}!", color=000)
-    await channel.send(embed=embed1)
+    embed2 = discord.Embed(title=f"{member} has left the server.", description=f"The member count is now {mc}!\n\n\nAccount Created at: {format_date}", color=000, footer=f"ID: {member_id}")
     await channel2.send(embed=embed1)
+    await channel.send(embed=embed2)
 # End commands
 keep_alive()
 if __name__ == "__main__":
