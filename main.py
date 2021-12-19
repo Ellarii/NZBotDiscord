@@ -111,7 +111,7 @@ async def snipe(ctx):
   embed.set_author(name=sman, icon_url=smaa)
   embed.set_footer(text=f"Sniped message id: {str(smi)}")
   await ctx.send(f"Sniped message requested by {ctx.author.display_name}", embed=embed)
-@client.command(name="esnipe", help="Snipes previously edited message")
+@client.command(name="esnipe", help="Snipes previously edited message **BROKEN**")
 async def esnipe(ctx):
   print(f"Snipe command used by {ctx.author.display_name} in {ctx.author.guild.name}")
   embed=discord.Embed(title="Previous message content:", description=emc)
@@ -260,30 +260,36 @@ async def on_ready():
 async def on_member_join(member):
     print(f"{member} has joined a server.")
     mc=member.guild.member_count
-    channel=client.get_channel(909954400565485588)
-    channel2 = client.get_channel(792281236650459156)
-    member_creation_date=member.created_at.timestamp()
-    format_date=dt.datetime.utcfromtimestamp(member_creation_date).strftime("%Y/%m/%d %H:%M")
-    embed1=discord.Embed(title=f"{member} has joined the server!", description=f"The member count is now {mc}!", color=000)
-    embed2 = discord.Embed(title=f"{member} has left the server.", description=f"The member count is now {mc}!\n\n\nAccount Created at: {format_date}", color=000)
-    embed2.set_footer(text=f"ID: {member.id}")
-    await channel2.send(embed=embed1)
-    await channel.send(embed=embed2)
+    if member.guild.id == 756238963240337438: 
+      channel=client.get_channel(909954400565485588)
+      channel2 = client.get_channel(792281236650459156)
+      member_creation_date=member.created_at.timestamp()
+      format_date=dt.datetime.utcfromtimestamp(member_creation_date).strftime("%Y/%m/%d %H:%M")
+      embed1=discord.Embed(title=f"{member} has joined the server!", description=f"The member count is now {mc}!", color=000)
+      embed2 = discord.Embed(title=f"{member} has left the server.", description=f"The member count is now {mc}!\n\n\nAccount Created at: {format_date}", color=000)
+      embed2.set_footer(text=f"ID: {member.id}")
+      await channel2.send(embed=embed1)
+      await channel.send(embed=embed2)
+    else:
+      await ctx.send("This command doesn't work in this server")
 
 # On member leave
 @client.event
 async def on_member_remove(member):
     print(f"{member} has left a server.")
     mc=member.guild.member_count
-    channel = client.get_channel(909954400565485588)
-    channel2 = client.get_channel(792281236650459156)
-    member_creation_date=member.created_at.timestamp()
-    format_date=dt.datetime.utcfromtimestamp(member_creation_date).strftime("%Y/%m/%d %H:%M")
-    embed1 = discord.Embed(title=f"{member} has left the server.", description=f"The member count is now {mc}!", color=000)
-    embed2 = discord.Embed(title=f"{member} has left the server.", description=f"The member count is now {mc}!\n\n\nAccount Created at: {format_date}", color=000)
-    embed2.set_footer(text=f"ID: {member.id}")
-    await channel2.send(embed=embed1)
-    await channel.send(embed=embed2)
+    if member.guild.id == 756238963240337438:
+      channel = client.get_channel(909954400565485588)
+      channel2 = client.get_channel(792281236650459156)
+      member_creation_date=member.created_at.timestamp()
+      format_date=dt.datetime.utcfromtimestamp(member_creation_date).strftime("%Y/%m/%d %H:%M")
+      embed1 = discord.Embed(title=f"{member} has left the server.", description=f"The member count is now {mc}!", color=000)
+      embed2 = discord.Embed(title=f"{member} has left the server.", description=f"The member count is now {mc}!\n\n\nAccount Created at: {format_date}", color=000)
+      embed2.set_footer(text=f"ID: {member.id}")
+      await channel2.send(embed=embed1)
+      await channel.send(embed=embed2)
+    else:
+      await ctx.send("This command doesn't work in this server")
 @client.event
 async def on_message_delete(message):
 
