@@ -9,7 +9,6 @@ import random
 import youtube_dl
 import asyncio
 import datetime as dt
-from profanity_filter import ProfanityFilter
 import spacy
 
 
