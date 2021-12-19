@@ -26,7 +26,6 @@ smaa = None # Snipe Message active
 emai=None
 eman=None
 emc=None
-emi=None
 emaa=None
 snipe_message_id = None
 ytdl_format_options = {
