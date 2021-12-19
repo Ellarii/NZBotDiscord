@@ -271,7 +271,7 @@ async def on_member_join(member):
       await channel2.send(embed=embed1)
       await channel.send(embed=embed2)
     else:
-      await ctx.send("This command doesn't work in this server")
+      print("This command doesn't work in this server (on join embed)")
 
 # On member leave
 @client.event
@@ -289,7 +289,7 @@ async def on_member_remove(member):
       await channel2.send(embed=embed1)
       await channel.send(embed=embed2)
     else:
-      await ctx.send("This command doesn't work in this server")
+      print("This command doesn't work in this server (on join embed)")
 @client.event
 async def on_message_delete(message):
 
