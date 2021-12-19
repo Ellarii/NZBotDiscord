@@ -9,6 +9,9 @@ import random
 import youtube_dl
 import asyncio
 import datetime as dt
+from profanity_filter import ProfanityFilter
+import spacy
+
 
 # Setup
 load_dotenv()
@@ -18,6 +21,12 @@ intents = discord.Intents.default()
 intents.members = True
 client = commands.Bot(command_prefix='~', intents=intents)
 prefix = '~'
+spacy.load('en')
+smc = None # Snipe message content
+smai = None # Snipe message author id
+sman = None # Snipe Message author name
+smaa = None # Snipe Message active
+snipe_message_id = None
 ytdl_format_options = {
     'format': 'bestaudio/best',
     'restrictfilenames': True,
@@ -92,6 +101,21 @@ async def kill(ctx, arg, amount=1):
   else:
     await ctx.channel.send(f"This command is used to spam ping a user. To begin, please type `{prefix}kill [UserPing]`!")
     print(fail)
+
+#smai author id
+# sman author name
+#smi msg id
+# smc msg contnt
+
+# Sniper command
+@client.command(name="snipe", help="Snipes previously deleted message")
+async def snipe(ctx):
+  embed = discord.Embed(title=f"Sniped message from {sman}", description=smc)
+  embed.set_author(name=sman, icon_url=smaa)
+  embed.set_footer(text=f"Sniped message id: {str(smi)}")
+  await ctx.send(f"Sniped message requested by {ctx.author.display_name}", embed=embed)
+
+
 
 # Embed message
 @client.command(name="botinfo", help="Displays Bot info = GitHub link")
@@ -210,7 +234,7 @@ async def stop(ctx):
         await ctx.send("The bot is not playing anything at the moment.")
         print(f"stop command failed in {ctx.guild}")
 
-@client.command(name="getid", description="Gets the ID of a user **MOD ONLY**")
+@client.command(name="getid", help="Gets the ID of a user **MOD ONLY**")
 @commands.has_role(759909993649930250)
 async def getid(ctx, user: discord.User):
   embed=discord.Embed(title=f"ID of {user}", description=f"The ID of this user is {user.id}")
@@ -257,6 +281,28 @@ async def on_member_remove(member):
     embed2.set_footer(text=f"ID: {member.id}")
     await channel2.send(embed=embed1)
     await channel.send(embed=embed2)
+@client.event
+async def on_message_delete(message):
+
+    global smc
+    global smai
+    global sman
+    global smi
+    global smaa
+
+    smc = message.content
+    smai = message.author.id
+    sman = message.author.display_name
+    smi = message.id
+    smaa = message.author.avatar_url
+    await asyncio.sleep(60)
+
+    if message.id == smi:
+        smai = None
+        sman = None
+        smc = None
+        smi = None
+        smaa = None
 # End commands
 keep_alive()
 if __name__ == "__main__":
