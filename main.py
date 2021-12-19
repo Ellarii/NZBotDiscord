@@ -9,7 +9,6 @@ import random
 import youtube_dl
 import asyncio
 import datetime as dt
-import spacy
 
 
 # Setup
@@ -20,7 +19,6 @@ intents = discord.Intents.default()
 intents.members = True
 client = commands.Bot(command_prefix='~', intents=intents)
 prefix = '~'
-spacy.load('en')
 smc = None # Snipe message content
 smai = None # Snipe message author id
 sman = None # Snipe Message author name
@@ -109,7 +107,8 @@ async def kill(ctx, arg, amount=1):
 # Sniper command
 @client.command(name="snipe", help="Snipes previously deleted message")
 async def snipe(ctx):
-  embed = discord.Embed(title=f"Sniped message from {sman}", description=smc)
+  print(f"Snipe command used by {ctx.author.display_name} in {ctx.author.guild.name}")
+  embed = discord.Embed(title=f"Sniped message:", description=smc)
   embed.set_author(name=sman, icon_url=smaa)
   embed.set_footer(text=f"Sniped message id: {str(smi)}")
   await ctx.send(f"Sniped message requested by {ctx.author.display_name}", embed=embed)
