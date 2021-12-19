@@ -99,11 +99,6 @@ async def kill(ctx, arg, amount=1):
     await ctx.channel.send(f"This command is used to spam ping a user. To begin, please type `{prefix}kill [UserPing]`!")
     print(fail)
 
-#smai author id
-# sman author name
-#smi msg id
-# smc msg contnt
-
 # Sniper command
 @client.command(name="snipe", help="Snipes previously deleted message")
 async def snipe(ctx):
