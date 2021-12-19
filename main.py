@@ -23,6 +23,11 @@ smc = None # Snipe message content
 smai = None # Snipe message author id
 sman = None # Snipe Message author name
 smaa = None # Snipe Message active
+emai=None
+eman=None
+emc=None
+emi=None
+emaa=None
 snipe_message_id = None
 ytdl_format_options = {
     'format': 'bestaudio/best',
@@ -107,7 +112,13 @@ async def snipe(ctx):
   embed.set_author(name=sman, icon_url=smaa)
   embed.set_footer(text=f"Sniped message id: {str(smi)}")
   await ctx.send(f"Sniped message requested by {ctx.author.display_name}", embed=embed)
-
+@client.command(name="esnipe", help="Snipes previously edited message")
+async def esnipe(ctx):
+  print(f"Snipe command used by {ctx.author.display_name} in {ctx.author.guild.name}")
+  embed=discord.Embed(title="Previous message content:", description=emc)
+  embed.set_author(name=eman,icon_url=emaa)
+  embed.set_footer(text=f"Sniped message id: {str(emi)}")
+  await ctx.send(f"Sniped message requested by {ctx.author.display_name}",embed=embed)
 
 
 # Embed message
@@ -296,6 +307,26 @@ async def on_message_delete(message):
         smc = None
         smi = None
         smaa = None
+@client.event
+async def on_message_edit(message):
+  global emc
+  global emai
+  global eman
+  global emi
+  global emaa
+  emc=message.content
+  emai=message.author.id
+  eman=message.author.display_name
+  emi=message.id
+  emaa=message.author.avatar_url
+  await asyncio.sleep(60)
+  if message.id==emi:
+    emai=None
+    eman=None
+    emc=None
+    emi=None
+    emaa=None
+  
 # End commands
 keep_alive()
 if __name__ == "__main__":
