@@ -1,0 +1,1 @@
+bad_words = ['nigg','cunt','cnut','blowjob','pussy','dick','d1ck','cock','c0ck']

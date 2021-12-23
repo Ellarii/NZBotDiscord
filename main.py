@@ -10,6 +10,7 @@ import youtube_dl
 import asyncio
 import datetime as dt
 import sys
+from word_blacklist import bad_words
 
 
 # Setup
@@ -224,8 +225,6 @@ async def play(ctx,url):
       await ctx.send("The bot is not connected to a voice channel.")
       print(f"play command failed in {ctx.guild}")
 
-
-
 @client.command(name='pause', help='This command pauses the song')
 async def pause(ctx):
      
@@ -315,7 +314,15 @@ async def on_member_remove(member):
       print("This command doesn't work in this server (on join embed)")
 @client.event
 async def on_message_delete(message):
-
+    channel=client.get_channel(792281236650459156)
+    if not any(word in message.content.lower() for word in bad_words):
+      embed=discord.Embed(title="Deleted Message Logged:", description=f"Deleted message sent by {message.author.name} detected in {channel}")
+      embed.set_author(name=message.author.name, icon_url=message.author.avatar_url)
+      embed.add_field(name="\nDeleted Message Content:", value=message.content.lower(), inline=False)
+      embed.set_footer(text=message.id)
+      await channel.send("Deleted Message Detected", embed=embed)
+    else:
+      pass
     global smc
     global smai
     global sman
@@ -354,6 +361,19 @@ async def on_message_edit(message_before, message_after):
     emac=None
     emi=None
     emaa= "https://cdn.discordapp.com/attachments/782748743748419603/922352397773307944/placeholder.png"
+@client.event
+async def on_message(message):
+  if any(word in message.content.lower() for word in bad_words):
+    msgcont=message.content.lower()
+    embed=discord.Embed(title="Banned word detected", description=f"Bad word sent by {message.author.name} were auto deleted. Escalate further if necessary.")
+    embed.set_author(name=f"{message.author.name}", icon_url=message.author.avatar_url)
+    embed.set_footer(text=f"Automodded message id = {message.id}")
+    embed.add_field(name="\nMessage as follows", value=f"{msgcont}", inline=False)
+    channel = client.get_channel(792281236650459156)
+    await message.delete()
+    await channel.send("Banned words detected:", embed=embed)
+
+
 # End commands
 keep_alive()
 if __name__ == "__main__":
