@@ -25,7 +25,7 @@ smc = None # Snipe message content
 smai = None # Snipe message author id
 sman = None # Snipe Message author name
 smaa= "https://cdn.discordapp.com/attachments/782748743748419603/922352397773307944/placeholder.png"
-smi=None 
+smi=None
 emai=None
 emi=None
 eman=None
@@ -321,14 +321,11 @@ async def on_message_delete(message):
     global sman
     global smi
     global smaa
-
     smc = message.content
     smai = message.author.id
     sman = message.author.display_name
     smi = message.id
     smaa = message.author.avatar_url
-    await asyncio.sleep(60)
-
     if message.id == smi:
         smai = None
         sman = None
