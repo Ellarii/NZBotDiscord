@@ -60,6 +60,7 @@ async def ping(ctx):
      
     await ctx.channel.send("pong")
     print(f"Ping command used in {ctx.guild}")
+    await ctx.message.delete()
 
 # Bot echoes
 @client.command(name="msg", help="Echoes a single word message")
@@ -67,6 +68,7 @@ async def msg(ctx, arg):
      
     await ctx.channel.send(arg)
     print(f"msg command used in {ctx.guild}")
+    await ctx.message.delete()
 
 # Multi word nz.msg
 @client.command(name="multimsg", help="Echoes a multiple word message")
@@ -77,6 +79,7 @@ async def multimsg(ctx, *args):
         response = response + " " + arg
     await ctx.channel.send(response)
     print(f"multimsg command used in {ctx.guild}")
+    await ctx.message.delete()
 
 @client.command(name="bing", help=f"Echoes `dong`. Different form of {prefix}ping")
 async def bing(ctx):
@@ -112,9 +115,10 @@ async def kill(ctx, arg, amount=1):
   else:
     await ctx.channel.send(f"This command is used to spam ping a user. To begin, please type `{prefix}kill [UserPing]`!")
     print(fail)
+  await ctx.message.delete()
 
 # Sniper command
-@client.command(name="snipe", help="Snipes previously deleted message")
+@client.command(name="snipe", aliases=["s"], help="Snipes previously deleted message")
 async def snipe(ctx):
    
   print(f"Snipe command used by {ctx.author.display_name} in {ctx.author.guild.name}")
@@ -122,7 +126,8 @@ async def snipe(ctx):
   embed.set_author(name=sman, icon_url=smaa)
   embed.set_footer(text=f"Sniped message id: {str(smi)}")
   await ctx.send(f"Sniped message requested by {ctx.author.display_name}", embed=embed)
-@client.command(name="esnipe", help="Snipes previously edited message")
+  await ctx.message.delete()
+@client.command(name="esnipe", aliases=["e"], help="Snipes previously edited message")
 async def esnipe(ctx):
    
   print(f"Esnipe command used by {ctx.author.display_name} in {ctx.author.guild.name}")
@@ -132,6 +137,7 @@ async def esnipe(ctx):
   embed.set_author(name=eman,icon_url=emaa)
   embed.set_footer(text=f"Edit sniped message id: {str(emi)}")
   await ctx.send(f"Sniped message requested by {ctx.author.display_name}",embed=embed)
+  await ctx.message.delete()
 
 
 # Embed message
@@ -141,6 +147,7 @@ async def botinfo(ctx):
   embed = discord.Embed(title="Github", url="https://github.com/Nouvelle-Zelande", description="This bot was created by Nouvelle-Zelande#6154.\nFeel free to send any queries/questions their way!", color=000000)
   await ctx.send(embed=embed)
   print(f"botinfo command used in {ctx.guild}")
+  await ctx.message.delete()
 
 @client.command(name="numbergen", help=f"Sends a random number between 1 and a specified amount. Format `{prefix}numbergen [MaxParam]`")
 async def numbergen(ctx, param):
@@ -149,6 +156,7 @@ async def numbergen(ctx, param):
   embed = discord.Embed(title="The number you generated was:", description=f"The number that you generated (between 1 and {param}) was:\n{number}", color=000000)
   await ctx.send(embed=embed)
   print(f"numbergen command used in {ctx.guild}")
+  await ctx.message.delete()
 
 @client.command(name="coinflip", help="Flips a coin")
 async def coinflip(ctx):
@@ -162,6 +170,7 @@ async def coinflip(ctx):
     embed.set_image(url="https://media.discordapp.net/attachments/759929659453866035/920540884003586048/AmericanQuarterTails.png")
   await ctx.send(embed=embed)
   print(f"coinflip command used in {ctx.guild}")
+  await ctx.message.delete()
 
 # Attempted music commands
 
@@ -177,6 +186,7 @@ async def joinvc(ctx):
     await channel.connect()
     await ctx.channel.send(f"{channel} successfully joined!")
     print(f"joinvc command used in {ctx.guild}")
+  await ctx.message.delete()
 
 @client.command(name="leavevc", help="Leaves a connected vc. Bot must be connected to a vc for this command to work")
 async def leavevc(ctx):
@@ -190,6 +200,7 @@ async def leavevc(ctx):
   else:
     await ctx.channel.send(f"I am not connected to a voice channel! To make me join one, join a voice channel and type `{prefix}joinvc`")
     print(f"leavevc command failed in {ctx.guild}")
+  await ctx.message.delete()
 
 youtube_dl.utils.bug_reports_message = lambda: ''
 
@@ -224,6 +235,7 @@ async def play(ctx,url):
     except:
       await ctx.send("The bot is not connected to a voice channel.")
       print(f"play command failed in {ctx.guild}")
+    await ctx.message.delete()
 
 @client.command(name='pause', help='This command pauses the song')
 async def pause(ctx):
@@ -235,6 +247,7 @@ async def pause(ctx):
     else:
         await ctx.send("The bot is not playing anything at the moment.")
         print(f"pause command failed in {ctx.guild}")
+    await ctx.message.delete()
     
 @client.command(name='resume', help='Resumes the song')
 async def resume(ctx):
@@ -246,6 +259,7 @@ async def resume(ctx):
     else:
         await ctx.send("The bot was not playing anything before this. Use play_song command")
         print(f"resume command failed in {ctx.guild}")
+    await ctx.message.delete()
 
 @client.command(name='stop', help='Stops the song')
 async def stop(ctx):
@@ -257,6 +271,7 @@ async def stop(ctx):
     else:
         await ctx.send("The bot is not playing anything at the moment.")
         print(f"stop command failed in {ctx.guild}")
+    await ctx.message.delete()
 
 @client.command(name="getid", help="Gets the ID of a user **MOD ONLY**")
 @commands.has_role(759909993649930250)
@@ -266,6 +281,7 @@ async def getid(ctx, user: discord.User):
   embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.avatar_url)
   await ctx.send(f"{user.id}", embed=embed)
   print(f"getid command used in {ctx.guild}")
+  await ctx.message.delete()
 
 
 # Always tracking
@@ -288,7 +304,7 @@ async def on_member_join(member):
       member_creation_date=member.created_at.timestamp()
       format_date=dt.datetime.utcfromtimestamp(member_creation_date).strftime("%Y/%m/%d %H:%M")
       embed1=discord.Embed(title=f"{member} has joined the server!", description=f"The member count is now {mc}!", color=000)
-      embed2 = discord.Embed(title=f"{member} has left the server.", description=f"The member count is now {mc}!\n\n\nAccount Created at: {format_date}", color=000)
+      embed2 = discord.Embed(title=f"{member} has joined the server.", description=f"The member count is now {mc}!\n\n\nAccount Created at: {format_date}", color=000)
       embed2.set_footer(text=f"ID: {member.id}")
       await channel2.send(embed=embed1)
       await channel.send(embed=embed2)
@@ -316,13 +332,11 @@ async def on_member_remove(member):
 async def on_message_delete(message):
     channel=client.get_channel(792281236650459156)
     if not any(word in message.content.lower() for word in bad_words):
-      embed=discord.Embed(title="Deleted Message Logged:", description=f"Deleted message sent by {message.author.name} detected in {channel}")
+      embed=discord.Embed(title="Deleted Message Logged:", description=f"Deleted message sent by {message.author.name} detected")
       embed.set_author(name=message.author.name, icon_url=message.author.avatar_url)
       embed.add_field(name="\nDeleted Message Content:", value=message.content.lower(), inline=False)
       embed.set_footer(text=message.id)
       await channel.send("Deleted Message Detected", embed=embed)
-    else:
-      pass
     global smc
     global smai
     global sman
@@ -333,6 +347,7 @@ async def on_message_delete(message):
     sman = message.author.display_name
     smi = message.id
     smaa = message.author.avatar_url
+    await asyncio.sleep(60)
     if message.id == smi:
         smai = None
         sman = None
@@ -364,7 +379,7 @@ async def on_message_edit(message_before, message_after):
 @client.event
 async def on_message(message):
   if any(word in message.content.lower() for word in bad_words):
-    msgcont=message.content.lower()
+    msgcont=message.content
     embed=discord.Embed(title="Banned word detected", description=f"Bad word sent by {message.author.name} were auto deleted. Escalate further if necessary.")
     embed.set_author(name=f"{message.author.name}", icon_url=message.author.avatar_url)
     embed.set_footer(text=f"Automodded message id = {message.id}")
@@ -372,6 +387,7 @@ async def on_message(message):
     channel = client.get_channel(792281236650459156)
     await message.delete()
     await channel.send("Banned words detected:", embed=embed)
+  await client.process_commands(message)
 
 
 # End commands
