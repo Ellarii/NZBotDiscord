@@ -88,34 +88,13 @@ async def bing(ctx):
   print(f"bing command used in {ctx.guild}")
 
 # Spam pinger (variable amount)
-@client.command(name="kill", help=f"Spam pings a user. Format `{prefix}kill [UserMention] [Amount]`")
-async def kill(ctx, arg, amount=1):
-   
-  fail = f"kill command attempted by {ctx.author} in {ctx.guild}"
-  if "@" in arg:
-    if "@everyone" in arg or "@here" in arg:
-      await ctx.channel.send("You are not allowed to ping this user")
-      print(fail)
-    else:
-      print(f"kill command used by {ctx.author} in {ctx.guild}")
-      if int(amount) is not ValueError:
-        if amount == 1:
-          await ctx.channel.send(f"If you wish to have more than one ping, please enter an amount in the following format\n`{prefix}kill [Mention] [Amount]`")
-        for number in range(int(amount)):
-          await ctx.channel.send(arg)
-      elif int(amount) is ValueError:
-        await ctx.channel.send("Please enter a number")
-    
-  elif arg is str:
-    await ctx.channel.send("Please ping a user")
-    print(fail)
-  elif "everyone" in arg or "here" in arg:
-    await ctx.channel.send("You are not allowed to ping this user")
-    print(fail)
-  else:
-    await ctx.channel.send(f"This command is used to spam ping a user. To begin, please type `{prefix}kill [UserPing]`!")
-    print(fail)
+@client.command(name="kill", aliases=["k"], help=f"Spam pings a user. format `{prefix}kill [UserMention] [Amount]`")
+async def kill(ctx, member: discord.User, amount=1):
+  for number in range(amount):
+    await ctx.send(f"<@{member.id}>")
+  print(f"Kill command used by {ctx.author.display_name} in {ctx.author.guild}")
   await ctx.message.delete()
+
 
 # Sniper command
 @client.command(name="snipe", aliases=["s"], help="Snipes previously deleted message")
@@ -331,12 +310,14 @@ async def on_member_remove(member):
 @client.event
 async def on_message_delete(message):
     channel=client.get_channel(792281236650459156)
-    if not any(word in message.content.lower() for word in bad_words):
-      embed=discord.Embed(title="Deleted Message Logged:", description=f"Deleted message sent by {message.author.name} detected")
-      embed.set_author(name=message.author.name, icon_url=message.author.avatar_url)
-      embed.add_field(name="\nDeleted Message Content:", value=message.content.lower(), inline=False)
-      embed.set_footer(text=message.id)
-      await channel.send("Deleted Message Detected", embed=embed)
+
+    if message.guild.id == 756238963240337438: # So it actually logs in thr right place
+      if not any(word in message.content.lower() for word in bad_words):
+        embed=discord.Embed(title="Deleted Message Logged:", description=f"Deleted message sent by {message.author.name} detected")
+        embed.set_author(name=message.author.name, icon_url=message.author.avatar_url)
+        embed.add_field(name="\nDeleted Message Content:", value=message.content.lower(), inline=False)
+        embed.set_footer(text=message.id)
+        await channel.send("Deleted Message Detected", embed=embed)
     global smc
     global smai
     global sman
