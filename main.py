@@ -310,14 +310,14 @@ async def on_member_remove(member):
 @client.event
 async def on_message_delete(message):
     channel=client.get_channel(792281236650459156)
-
-    if message.guild.id == 756238963240337438: # So it actually logs in thr right place
-      if not any(word in message.content.lower() for word in bad_words):
-        embed=discord.Embed(title="Deleted Message Logged:", description=f"Deleted message sent by {message.author.name} detected")
-        embed.set_author(name=message.author.name, icon_url=message.author.avatar_url)
-        embed.add_field(name="\nDeleted Message Content:", value=message.content.lower(), inline=False)
-        embed.set_footer(text=message.id)
-        await channel.send("Deleted Message Detected", embed=embed)
+    if message.author.id != 920398992632860792:
+      if message.guild.id == 756238963240337438: # So it actually logs in thr right place
+        if not any(word in message.content.lower() for word in bad_words):
+          embed=discord.Embed(title="Deleted Message Logged:", description=f"Deleted message sent by {message.author.name} detected")
+          embed.set_author(name=message.author.name, icon_url=message.author.avatar_url)
+          embed.add_field(name="\nDeleted Message Content:", value=message.content.lower(), inline=False)
+          embed.set_footer(text=message.id)
+          await channel.send("Deleted Message Detected", embed=embed)
     global smc
     global smai
     global sman
