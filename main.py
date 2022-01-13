@@ -1,4 +1,4 @@
-
+  
 # Imports
 import os
 import discord
@@ -337,6 +337,16 @@ async def on_message_delete(message):
         smaa= "https://cdn.discordapp.com/attachments/782748743748419603/922352397773307944/placeholder.png"
 @client.event
 async def on_message_edit(message_before, message_after):
+  channel=client.get_channel(792281236650459156)
+  if message_before.author.id != 920398992632860792:
+    if message_before.guild.id == 756238963240337438: # So it actually logs in thr right place
+      if not any(word in message_before.content.lower() for word in bad_words) or not any(word in message_after.content.lower() for word in bad_words):
+        embed=discord.Embed(title="Deleted Message Logged:", description=f"Deleted message sent by {message_before.author.name} detected")
+        embed.set_author(name=message_before.author.name, icon_url=message_before.author.avatar_url)
+        embed.add_field(name="\nMessage Content before edit:", value=message_before.content, inline=True)
+        embed.add_field(name="\nMessage Content after edit:", value=message_after.content, inline=True)
+        embed.set_footer(text=f"Message ID: {message_before.id}")
+        await channel.send("Edited Message Detected", embed=embed)
   global embc
   global emac
   global emai
