@@ -33,6 +33,8 @@ eman=None
 emaa="https://cdn.discordapp.com/attachments/782748743748419603/922352397773307944/placeholder.png"
 embc=None
 emac=None
+logging_bypass = [270904126974590976, 716390085896962058, 408785106942164992, 920398992632860792]
+
 ytdl_format_options = {
     'format': 'bestaudio/best',
     'restrictfilenames': True,
@@ -309,13 +311,27 @@ async def on_member_remove(member):
       print("This command doesn't work in this server (on join embed)")
 @client.event
 async def on_message_delete(message):
-    channel=client.get_channel(792281236650459156)
-    if message.author.id != 920398992632860792:
+    if message.author.id not in logging_bypass:
       if message.guild.id == 756238963240337438: # So it actually logs in thr right place
+        channel=client.get_channel(792281236650459156)
         if not any(word in message.content.lower() for word in bad_words):
           embed=discord.Embed(title="Deleted Message Logged:", description=f"Deleted message sent by {message.author.name} detected")
           embed.set_author(name=message.author.name, icon_url=message.author.avatar_url)
-          embed.add_field(name="\nDeleted Message Content:", value=message.content.lower(), inline=False)
+          if len(message.embeds) >=1:
+            embed.add_field(name="\nDeleted Message Content (embed)", value="`This message has an embed, which is unable to be logged`", inline = False)
+          elif len(message.embeds) == 0:
+            embed.add_field(name="\nDeleted Message Content:", value=message.content, inline=False)
+          embed.set_footer(text=message.id)
+          await channel.send("Deleted Message Detected", embed=embed)
+      elif message.guild.id == 661318259043467264:
+        channel=client.get_channel(753236539093549066)
+        if not any(word in message.content.lower() for word in bad_words):
+          embed=discord.Embed(title="Deleted Message Logged:", description=f"Deleted message sent by {message.author.name} detected")
+          embed.set_author(name=message.author.name, icon_url=message.author.avatar_url)
+          if len(message.embeds) >=1:
+            embed.add_field(name="\nDeleted Message Content (embed)", value="`This message has an embed, which is unable to be logged`", inline = False)
+          elif len(message.embeds) == 0:
+            embed.add_field(name="\nDeleted Message Content:", value=message.content, inline=False)
           embed.set_footer(text=message.id)
           await channel.send("Deleted Message Detected", embed=embed)
     global smc
@@ -337,16 +353,39 @@ async def on_message_delete(message):
         smaa= "https://cdn.discordapp.com/attachments/782748743748419603/922352397773307944/placeholder.png"
 @client.event
 async def on_message_edit(message_before, message_after):
-  channel=client.get_channel(792281236650459156)
-  if message_before.author.id != 920398992632860792:
+  checkid = message_before.author.id
+  if checkid not in logging_bypass:
     if message_before.guild.id == 756238963240337438: # So it actually logs in thr right place
+      channel=client.get_channel(792281236650459156)
       if not any(word in message_before.content.lower() for word in bad_words) or not any(word in message_after.content.lower() for word in bad_words):
-        embed=discord.Embed(title="Deleted Message Logged:", description=f"Deleted message sent by {message_before.author.name} detected")
-        embed.set_author(name=message_before.author.name, icon_url=message_before.author.avatar_url)
-        embed.add_field(name="\nMessage Content before edit:", value=message_before.content, inline=True)
-        embed.add_field(name="\nMessage Content after edit:", value=message_after.content, inline=True)
+        embed=discord.Embed(title="Edited Message Logged:", description=f"Edited message sent by {message_before.author.name} detected")
+        embed.set_author(name=message_before.author.name, icon_url=message_before.author.avatar_url)          
+        if len(message_before.embeds) == 0:
+          embed.add_field(name="\nMessage Content before edit", value=message_before.content, inline = True)
+        elif len(message_before.embeds)>= 1:
+          embed.add_field(name = "\nMessage Content before edit (embed)",value="`This message has an embed, which are unable to be logged`", inline=True)
+        if len(message_after.embeds) == 0:
+          embed.add_field(name="\nMessage Content after edit", value =  message_after.content, inline = True)
+        elif len(message_after.embeds)>=1:
+          embed.add_field(name="\nMessage Content after edit (embed)", value="`This message has an embed, which is unable to be logged`", inline = True)
         embed.set_footer(text=f"Message ID: {message_before.id}")
         await channel.send("Edited Message Detected", embed=embed)
+    if message_before.guild.id == 661318259043467264: # So it actually logs in thr right place
+      channel = client.get_channel(753236539093549066)
+      if not any(word in message_before.content.lower() for word in bad_words) or not any(word in message_after.content.lower() for word in bad_words):
+        embed=discord.Embed(title="Edited Message Logged:", description=f"Edited message sent by {message_before.author.name} detected")
+        embed.set_author(name=message_before.author.name, icon_url=message_before.author.avatar_url)          
+        if len(message_before.embeds) == 0:
+          embed.add_field(name="\nMessage Content before edit", value=message_before.content, inline = True)
+        elif len(message_before.embeds)>= 1:
+          embed.add_field(name = "\nMessage Content before edit (embed)",value="`This message has an embed, which are unable to be logged`", inline=True)
+        if len(message_after.embeds) == 0:
+          embed.add_field(name="\nMessage Content after edit", value =  message_after.content, inline = True)
+        elif len(message_after.embeds)>=1:
+          embed.add_field(name="\nMessage Content after edit (embed)", value="`This message has an embed, which is unable to be logged`", inline = True)
+        embed.set_footer(text=f"Message ID: {message_before.id}")
+        await channel.send("Edited Message Detected", embed=embed)
+    
   global embc
   global emac
   global emai
