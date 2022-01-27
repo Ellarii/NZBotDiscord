@@ -1,15 +1,10 @@
   
 # Imports
-import os
-import discord
+import os, discord, random, youtube_dl, asyncio, sys, json
 from discord.ext import commands
 from dotenv import load_dotenv
 from keep_alive import keep_alive
-import random
-import youtube_dl
-import asyncio
 import datetime as dt
-import sys
 from word_blacklist import bad_words
 
 
@@ -33,7 +28,10 @@ eman=None
 emaa="https://cdn.discordapp.com/attachments/782748743748419603/922352397773307944/placeholder.png"
 embc=None
 emac=None
-logging_bypass = [270904126974590976, 716390085896962058, 408785106942164992, 920398992632860792]
+logging_bypass = [270904126974590976, 716390085896962058, 408785106942164992, 920398992632860792, 282859044593598464, 204255221017214977]
+with open('lvl_d.json', 'r') as lf:
+  level_log=json.load(lf)
+
 
 ytdl_format_options = {
     'format': 'bestaudio/best',
@@ -64,24 +62,6 @@ async def ping(ctx):
     print(f"Ping command used in {ctx.guild}")
     await ctx.message.delete()
 
-# Bot echoes
-@client.command(name="msg", help="Echoes a single word message")
-async def msg(ctx, arg):
-     
-    await ctx.channel.send(arg)
-    print(f"msg command used in {ctx.guild}")
-    await ctx.message.delete()
-
-# Multi word nz.msg
-@client.command(name="multimsg", help="Echoes a multiple word message")
-async def multimsg(ctx, *args):
-     
-    response = ""
-    for arg in args:
-        response = response + " " + arg
-    await ctx.channel.send(response)
-    print(f"multimsg command used in {ctx.guild}")
-    await ctx.message.delete()
 
 @client.command(name="bing", help=f"Echoes `dong`. Different form of {prefix}ping")
 async def bing(ctx):
@@ -97,6 +77,20 @@ async def kill(ctx, member: discord.User, amount=1):
   print(f"Kill command used by {ctx.author.display_name} in {ctx.author.guild}")
   await ctx.message.delete()
 
+@client.command(name="rank", aliases=["r"], help="Displays your xp")
+async def rank(ctx, member:discord.User):
+  with open('lvl_d.json', 'r') as f:
+    lvlstr = json.load(f)
+  guild = client.get_guild(ctx.author.guild.id)
+  user = discord.utils.get(guild.members, name=f"{member.name}", discriminator=f"{member.discriminator}")
+  if str(user) in lvlstr:
+    xp = lvlstr[f"{user}"]
+  else:
+    xp = 0
+  e = discord.Embed(title = f"{ctx.author.name}\'s XP!")
+  e.add_field(name="XP", value=f"This user has {xp} XP!", inline = False)
+  e.set_author(name=ctx.author.name, icon_url = ctx.author.avatar_url)
+  await ctx.send(embed=e)
 
 # Sniper command
 @client.command(name="snipe", aliases=["s"], help="Snipes previously deleted message")
@@ -408,6 +402,7 @@ async def on_message_edit(message_before, message_after):
     emaa= "https://cdn.discordapp.com/attachments/782748743748419603/922352397773307944/placeholder.png"
 @client.event
 async def on_message(message):
+  level_int = random.choice(list(range(3,6)))
   if any(word in message.content.lower() for word in bad_words):
     msgcont=message.content
     embed=discord.Embed(title="Banned word detected", description=f"Bad word sent by {message.author.name} were auto deleted. Escalate further if necessary.")
@@ -417,6 +412,19 @@ async def on_message(message):
     channel = client.get_channel(792281236650459156)
     await message.delete()
     await channel.send("Banned words detected:", embed=embed)
+  with open('lvl_d.json', 'w') as lf:
+    if message.author.id in logging_bypass:
+      pass
+    else:
+      if message.author.id in level_log:
+        level_log[message.author.id] += level_int
+      else:
+        level_log[message.author.id] = 0
+        level_log[message.author.id] += level_int
+
+    json.dump(level_log, lf)
+  if message.content == "the":
+    await message.channel.send("<:the:934972010461823016>")
   await client.process_commands(message)
 
 
