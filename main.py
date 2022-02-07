@@ -1,12 +1,11 @@
   
 # Imports
-import os, discord, random, youtube_dl, asyncio, sys, json
+import os, discord, random, asyncio, sys, json, glob
 from discord.ext import commands
 from dotenv import load_dotenv
 from keep_alive import keep_alive
 import datetime as dt
 from word_blacklist import bad_words
-
 
 # Setup
 load_dotenv()
@@ -29,29 +28,10 @@ emaa="https://cdn.discordapp.com/attachments/782748743748419603/9223523977733079
 embc=None
 emac=None
 logging_bypass = [270904126974590976, 716390085896962058, 408785106942164992, 920398992632860792, 282859044593598464, 204255221017214977]
-with open('lvl_d.json', 'r') as lf:
+with open('json/lvl_d.json', 'r') as lf:
   level_log=json.load(lf)
-
-
-ytdl_format_options = {
-    'format': 'bestaudio/best',
-    'restrictfilenames': True,
-    'noplaylist': True,
-    'nocheckcertificate': True,
-    'ignoreerrors': False,
-    'logtostderr': False,
-    'quiet': True,
-    'no_warnings': True,
-    'default_search': 'auto',
-    'source_address': '0.0.0.0' # bind to ipv4 since ipv6 addresses cause issues sometimes
-}
-
-ffmpeg_options = {
-    'options': '-vn'
-}
-
-ytdl = youtube_dl.YoutubeDL(ytdl_format_options)
-
+file_path_type = "./assets/raccoonstore/*.gif"
+raccoons = glob.glob(file_path_type)
 
 # Commands (on queue)
 # Checks if bot is active
@@ -60,8 +40,6 @@ async def ping(ctx):
      
     await ctx.channel.send("pong")
     print(f"Ping command used in {ctx.guild}")
-    await ctx.message.delete()
-
 
 @client.command(name="bing", help=f"Echoes `dong`. Different form of {prefix}ping")
 async def bing(ctx):
@@ -69,13 +47,37 @@ async def bing(ctx):
   await ctx.channel.send("dong")
   print(f"bing command used in {ctx.guild}")
 
+@client.command(name="raccoon", aliases=['rac', 'ra', 'redpanda', 'red', 're'], help="Haha raccoon")
+async def raccoon(ctx):
+  print("raccoon generated")
+  async with ctx.typing():
+    embed = discord.Embed(title="The rategoon/red panda you have generated is:")
+    file = discord.File(f"{random.choice(raccoons)}", filename="image.gif")
+    embed.set_image(url="attachment://image.gif")
+    embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.avatar_url)
+    embed.set_footer(text="Source: Misc Images")
+    await asyncio.sleep(3)
+  await ctx.send("Generation Successful!",file=file, embed=embed)
+
 # Spam pinger (variable amount)
-@client.command(name="kill", aliases=["k"], help=f"Spam pings a user. format `{prefix}kill [UserMention] [Amount]`")
-async def kill(ctx, member: discord.User, amount=1):
-  for number in range(amount):
-    await ctx.send(f"<@{member.id}>")
-  print(f"Kill command used by {ctx.author.display_name} in {ctx.author.guild}")
-  await ctx.message.delete()
+@client.command(name="kill", aliases=["k"], help=f"Spam pings a user. format `{prefix}kill [UserMention]`")
+async def kill(ctx, member: discord.User):
+  if ctx.author.guild.id == 850685567628607509:
+    await ctx.send("You cannot use that here")
+  else:
+    channel = ctx.message.channel
+    for number in range(10):
+      await channel.send(f"<@{member.id}>")
+    print(f"Kill command used by {ctx.author.display_name} in {ctx.author.guild}")
+
+@client.command(name="ishedead", aliases = ["ihd"], help="is dea d he s?")
+async def ishedead(ctx, member:discord.User):
+  if member.discriminator == "7818":
+    await ctx.send("lmao die")
+  elif member.discriminator == "7948":
+    await ctx.send("lmao i see")
+  else:
+    await ctx.send("lmao live")
 
 @client.command(name="rank", aliases=["r"], help="Displays your xp")
 async def rank(ctx, member:discord.User):
@@ -101,7 +103,6 @@ async def snipe(ctx):
   embed.set_author(name=sman, icon_url=smaa)
   embed.set_footer(text=f"Sniped message id: {str(smi)}")
   await ctx.send(f"Sniped message requested by {ctx.author.display_name}", embed=embed)
-  await ctx.message.delete()
 @client.command(name="esnipe", aliases=["e"], help="Snipes previously edited message")
 async def esnipe(ctx):
    
@@ -112,8 +113,6 @@ async def esnipe(ctx):
   embed.set_author(name=eman,icon_url=emaa)
   embed.set_footer(text=f"Edit sniped message id: {str(emi)}")
   await ctx.send(f"Sniped message requested by {ctx.author.display_name}",embed=embed)
-  await ctx.message.delete()
-
 
 # Embed message
 @client.command(name="botinfo", help="Displays Bot info = GitHub link")
@@ -146,107 +145,6 @@ async def coinflip(ctx):
   await ctx.send(embed=embed)
   print(f"coinflip command used in {ctx.guild}")
   await ctx.message.delete()
-
-# Attempted music commands
-
-#Join + leave vc
-@client.command(name="joinvc", help="Joins a vc. User must be connected to a vc for this command to work")
-async def joinvc(ctx):
-   
-  if not ctx.author.voice.channel:
-    await ctx.channel.send(f"{ctx.message.author.name} is not connected to a voice channel!")
-    print(f"joinvc command failed in {ctx.guild}")
-  else:
-    channel = ctx.author.voice.channel
-    await channel.connect()
-    await ctx.channel.send(f"{channel} successfully joined!")
-    print(f"joinvc command used in {ctx.guild}")
-  await ctx.message.delete()
-
-@client.command(name="leavevc", help="Leaves a connected vc. Bot must be connected to a vc for this command to work")
-async def leavevc(ctx):
-   
-  voice_client = ctx.message.guild.voice_client
-  if voice_client.is_connected:
-    channel = ctx.author.voice.channel
-    await ctx.voice_client.disconnect()
-    await ctx.channel.send(f"{channel} successfully left!")
-    print(f"leavevc command used in {ctx.guild}")
-  else:
-    await ctx.channel.send(f"I am not connected to a voice channel! To make me join one, join a voice channel and type `{prefix}joinvc`")
-    print(f"leavevc command failed in {ctx.guild}")
-  await ctx.message.delete()
-
-youtube_dl.utils.bug_reports_message = lambda: ''
-
-class YTDLSource(discord.PCMVolumeTransformer):
-    def __init__(self, source, *, data, volume=0.5):
-        super().__init__(source, volume)
-        self.data = data
-        self.title = data.get('title')
-        self.url = ""
-
-    @classmethod
-    async def from_url(cls, url, *, loop=None, stream=False):
-      loop = loop or asyncio.get_event_loop()
-      data = await loop.run_in_executor(None, lambda: ytdl.extract_info(url, download=not stream))
-      if 'entries' in data:
-        # take first item from a playlist
-        data = data['entries'][0]
-      filename = data['title'] if stream else ytdl.prepare_filename(data)
-      return filename
-
-@client.command(name='play', help='To play song')
-async def play(ctx,url):
-     
-    try :
-      server = ctx.message.guild
-      voice_channel = server.voice_client
-      async with ctx.typing():
-        filename = await YTDLSource.from_url(url, loop=client.loop)
-        voice_channel.play(discord.FFmpegPCMAudio(executable="ffmpeg.exe", source=filename))
-      await ctx.send('**Now playing:** {}'.format(filename))
-      print(f"play command used in {ctx.guild}")
-    except:
-      await ctx.send("The bot is not connected to a voice channel.")
-      print(f"play command failed in {ctx.guild}")
-    await ctx.message.delete()
-
-@client.command(name='pause', help='This command pauses the song')
-async def pause(ctx):
-     
-    voice_client = ctx.message.guild.voice_client
-    if voice_client.is_playing():
-        await voice_client.pause()
-        print(f"pause command used in {ctx.guild}")
-    else:
-        await ctx.send("The bot is not playing anything at the moment.")
-        print(f"pause command failed in {ctx.guild}")
-    await ctx.message.delete()
-    
-@client.command(name='resume', help='Resumes the song')
-async def resume(ctx):
-     
-    voice_client = ctx.message.guild.voice_client
-    if voice_client.is_paused():
-        await voice_client.resume()
-        print(f"resume command used in {ctx.guild}")
-    else:
-        await ctx.send("The bot was not playing anything before this. Use play_song command")
-        print(f"resume command failed in {ctx.guild}")
-    await ctx.message.delete()
-
-@client.command(name='stop', help='Stops the song')
-async def stop(ctx):
-     
-    voice_client = ctx.message.guild.voice_client
-    if voice_client.is_playing():
-        await voice_client.stop()
-        print(f"stop command used in {ctx.guild}")
-    else:
-        await ctx.send("The bot is not playing anything at the moment.")
-        print(f"stop command failed in {ctx.guild}")
-    await ctx.message.delete()
 
 @client.command(name="getid", help="Gets the ID of a user **MOD ONLY**")
 @commands.has_role(759909993649930250)
@@ -403,15 +301,16 @@ async def on_message_edit(message_before, message_after):
 @client.event
 async def on_message(message):
   level_int = random.choice(list(range(3,6)))
-  if any(word in message.content.lower() for word in bad_words):
-    msgcont=message.content
-    embed=discord.Embed(title="Banned word detected", description=f"Bad word sent by {message.author.name} were auto deleted. Escalate further if necessary.")
-    embed.set_author(name=f"{message.author.name}", icon_url=message.author.avatar_url)
-    embed.set_footer(text=f"Automodded message id = {message.id}")
-    embed.add_field(name="\nMessage as follows", value=f"{msgcont}", inline=False)
-    channel = client.get_channel(792281236650459156)
-    await message.delete()
-    await channel.send("Banned words detected:", embed=embed)
+  if message.guild.id != 850685567628607509:
+    if any(word in message.content.lower() for word in bad_words):
+      msgcont=message.content
+      embed=discord.Embed(title="Banned word detected", description=f"Bad word sent by {message.author.name} were auto deleted. Escalate further if necessary.")
+      embed.set_author(name=f"{message.author.name}", icon_url=message.author.avatar_url)
+      embed.set_footer(text=f"Automodded message id = {message.id}")
+      embed.add_field(name="\nMessage as follows", value=f"{msgcont}", inline=False)
+      channel = client.get_channel(792281236650459156)
+      await message.delete()
+      await channel.send("Banned words detected:", embed=embed)
   with open('lvl_d.json', 'w') as lf:
     if message.author.id in logging_bypass:
       pass
@@ -423,8 +322,8 @@ async def on_message(message):
         level_log[message.author.id] += level_int
 
     json.dump(level_log, lf)
-  if message.content == "the":
-    await message.channel.send("<:the:934972010461823016>")
+  if message.content.lower() == "i see":
+    await message.add_reaction("<:ISee:853899039271419924>")
   await client.process_commands(message)
 
 
