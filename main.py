@@ -6,11 +6,11 @@ from dotenv import load_dotenv
 from keep_alive import keep_alive
 import datetime as dt
 from word_blacklist import bad_words
-
 # Setup
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
 GUILD = os.getenv('DISCORD_GUILD')
+words_snipe_censor = os.getenv('SCENSOR')
 intents = discord.Intents.default()
 intents.members = True
 client = commands.Bot(command_prefix='~', intents=intents)
@@ -28,6 +28,7 @@ emaa="https://cdn.discordapp.com/attachments/782748743748419603/9223523977733079
 embc=None
 emac=None
 logging_bypass = [270904126974590976, 716390085896962058, 408785106942164992, 920398992632860792, 282859044593598464, 204255221017214977]
+words_autoban = []
 with open('json/lvl_d.json', 'r') as lf:
   level_log=json.load(lf)
 file_path_type = "./assets/raccoonstore/*.gif"
@@ -64,6 +65,7 @@ async def raccoon(ctx):
 async def kill(ctx, member: discord.User):
   if ctx.author.guild.id == 850685567628607509:
     await ctx.send("You cannot use that here")
+    print(f"Kill command Failed by {ctx.author.display_name} in {ctx.author.guild}")
   else:
     channel = ctx.message.channel
     for number in range(10):
@@ -99,20 +101,28 @@ async def rank(ctx, member:discord.User):
 async def snipe(ctx):
    
   print(f"Snipe command used by {ctx.author.display_name} in {ctx.author.guild.name}")
-  embed = discord.Embed(title=f"Sniped message:", description=smc)
-  embed.set_author(name=sman, icon_url=smaa)
-  embed.set_footer(text=f"Sniped message id: {str(smi)}")
-  await ctx.send(f"Sniped message requested by {ctx.author.display_name}", embed=embed)
+  if smc in words_snipe_censor:
+    await ctx.send("Snipe failed - Bad Word")
+    print("User failed snipe - Bad Words")
+  else:
+    embed = discord.Embed(title=f"Sniped message:", description=smc)
+    embed.set_author(name=sman, icon_url=smaa)
+    embed.set_footer(text=f"Sniped message id: {str(smi)}")
+    await ctx.send(f"Sniped message requested by {ctx.author.display_name}", embed=embed)
 @client.command(name="esnipe", aliases=["e"], help="Snipes previously edited message")
 async def esnipe(ctx):
    
   print(f"Esnipe command used by {ctx.author.display_name} in {ctx.author.guild.name}")
-  embed=discord.Embed(title="Message content:")
-  embed.add_field(name="Before Edit", value=embc, inline=True)
-  embed.add_field(name="After Edit", value=emac, inline=True)
-  embed.set_author(name=eman,icon_url=emaa)
-  embed.set_footer(text=f"Edit sniped message id: {str(emi)}")
-  await ctx.send(f"Sniped message requested by {ctx.author.display_name}",embed=embed)
+  if (embc in words_snipe_censor) or (emac in words_snipe_censor):
+    print("User failed esnipe - bad words")
+    await ctx.send("Snipe failed - Bad word")
+  else:
+    embed=discord.Embed(title="Message content:")
+    embed.add_field(name="Before Edit", value=embc, inline=True)
+    embed.add_field(name="After Edit", value=emac, inline=True)
+    embed.set_author(name=eman,icon_url=emaa)
+    embed.set_footer(text=f"Edit sniped message id: {str(emi)}")
+    await ctx.send(f"Sniped message requested by {ctx.author.display_name}",embed=embed)
 
 # Embed message
 @client.command(name="botinfo", help="Displays Bot info = GitHub link")
@@ -156,8 +166,24 @@ async def getid(ctx, user: discord.User):
   print(f"getid command used in {ctx.guild}")
   await ctx.message.delete()
 
-
-# Always tracking
+@client.command(name="sd", help="a")
+async def sd(ctx, guildid, *args):
+  count=0
+  if ctx.message.author.id == 375759240171618305:
+    response = ""
+    ch = client.get_channel(int(guildid))
+    for arg in args:
+      if count == 0:
+        response = arg
+      else:
+        response = response + " " + arg
+      count+=1
+    await ctx.send(f"`{response}` successfully sent to channel!")
+    await ch.send(response)
+  else:
+    await ch.send("no")
+  
+# Always tracking (events)
 # On bot begin
 @client.event
 async def on_ready():
@@ -201,6 +227,8 @@ async def on_member_remove(member):
       await channel.send(embed=embed2)
     else:
       print("This command doesn't work in this server (on join embed)")
+
+# On deletion of Message
 @client.event
 async def on_message_delete(message):
     if message.author.id not in logging_bypass:
@@ -243,6 +271,8 @@ async def on_message_delete(message):
         smc = None
         smi = None
         smaa= "https://cdn.discordapp.com/attachments/782748743748419603/922352397773307944/placeholder.png"
+
+#On Edit of Message
 @client.event
 async def on_message_edit(message_before, message_after):
   checkid = message_before.author.id
@@ -298,6 +328,8 @@ async def on_message_edit(message_before, message_after):
     emac=None
     emi=None
     emaa= "https://cdn.discordapp.com/attachments/782748743748419603/922352397773307944/placeholder.png"
+
+#On Message
 @client.event
 async def on_message(message):
   level_int = random.choice(list(range(3,6)))
